@@ -49,28 +49,29 @@ def noseq(n,m):
 	"""
 	Creates an unordered sequrency
 	"""
-    v=[n]
-    for i in range(m-1):
-        v=v+[n-i-1]
-    return v
+	
+	v=[n]
+	for i in range(m-1):
+		v=v+[n-i-1]
+	return v
 
 def oseq(init,fin):
 	"""
 	Creats an ordered sequency
 	"""
-    v=[init]
-    n=fin-init
-    for i in range(n):
-        v=v+[init+i+1]
-    return v
+	v=[init]
+	n=fin-init
+	for i in range(n):
+		v=v+[init+i+1]
+	return v
 
 def summat(m1,m2):
-    dim=len(m1)
-    s=mat_zero(dim)
-    for i in range(dim):
-        for j in range (dim):
-            s[i][j]=m1[i][j]+m2[i][j]
-    return s
+	dim=len(m1)
+	s=mat_zero(dim)
+	for i in range(dim):
+		for j in range (dim):
+			s[i][j]=m1[i][j]+m2[i][j]
+	return s
 
 def ang(vec):
     """
@@ -115,10 +116,10 @@ def ang(vec):
     return dim,n,s,y,z
 
 def prep(vec):
-	"""
-	Does the encoding part to be used
-	with the Tao Xin method.
-	"""
+    """
+    Does the encoding part to be used
+    with the Tao Xin method.
+    """
     tam,qbits,shift,ang_y,ang_z=ang(vec)
     ycircuit=QuantumCircuit(qbits)
     zcircuit=QuantumCircuit(qbits)
@@ -139,7 +140,7 @@ def prep(vec):
                 if(vec[i]==0):
                     ycircuit.x(qbits-i-1)
                     zcircuit.x(qbits-i-1)
-
+            
             con_y=qcy.to_gate().control(indice)
             con_z=qcz.to_gate().control(indice)
             ycircuit.append(con_y,noseq(qbits-1,indice)+[qbits-1-indice])
@@ -155,10 +156,10 @@ def prep(vec):
     return cirprep
 
 def txun(M,b,x0,t,k):
-	"""
-	Tao Xin algorithm to solve LDEs system.
-	(Unitary case)
-	"""
+    """
+    Tao Xin algorithm to solve LDEs system.
+    (Unitary case)
+    """
     N=len(x0)
     n=math.ceil(np.log2(N))
     anc=math.ceil(np.log2(k+1))
@@ -185,7 +186,7 @@ def txun(M,b,x0,t,k):
     v=[[Cnum/alep,Dnum/alep],[Dnum/alep,-Cnum/alep]]
     circ=QuantumCircuit(n+anc+1)
     circ.unitary(v,n+anc)
-
+    
     conUx=prep(x0).to_gate().control(1)
     conb=prep(b).to_gate().control(1)
     circ.x(n+anc)
@@ -219,11 +220,11 @@ def txun(M,b,x0,t,k):
     circ=circ.compose(circ1,range(n+anc+1))
     return alep,circ
 
-def txm(M,mats,coefs,b,x_0,t,k)
-	"""
-	Tao Xin algorithm to solve LDEs system.
-	(Includes particular solutions)
-	"""
+def txm(M,mats,coefs,b,x_0,t,k):
+    """
+    Tao Xin algorithm to solve LDEs system.
+    (Includes particular solutions)
+    """
     n=math.ceil(np.log2(len(x_0)))
     L=len(coefs)
     qdits=math.ceil(np.log2(L))
@@ -232,7 +233,7 @@ def txm(M,mats,coefs,b,x_0,t,k)
     for i in range(L):
         soma=soma+coefs[i]
     fator=soma
-
+    
     aux=0.0
     for i in range(L):
         aux=aux+coefs[i]
@@ -325,10 +326,10 @@ def txm(M,mats,coefs,b,x_0,t,k)
     return S,circ
 
 def getsol(vec, anc, num):
-	"""
-	Does the decoding used to get the
-	output from Tao Xin algorithms.
-	"""
+    """
+    Does the decoding used to get the
+    output from Tao Xin algorithms.
+    """ 
     sol=[0]
     tam=len(vec)
     dig=math.ceil(np.log2(tam))
