@@ -232,7 +232,7 @@ def txm(M,mats,coefs,b,x_0,t,k)
     for i in range(L):
         soma=soma+coefs[i]
     fator=soma
-    #Calculo das constantes g1,g2
+
     aux=0.0
     for i in range(L):
         aux=aux+coefs[i]
