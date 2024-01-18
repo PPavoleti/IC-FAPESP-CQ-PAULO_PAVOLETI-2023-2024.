@@ -46,32 +46,32 @@ def zeros(M):
     return aux3
 
 def noseq(n,m):
-	"""
-	Creates an unordered sequrency
-	"""
-	
-	v=[n]
-	for i in range(m-1):
-		v=v+[n-i-1]
-	return v
+    """
+    Creates an unordered sequrency
+    """
+
+    v=[n]
+    for i in range(m-1):
+        v=v+[n-i-1]
+    return v
 
 def oseq(init,fin):
-	"""
-	Creats an ordered sequency
-	"""
-	v=[init]
-	n=fin-init
-	for i in range(n):
-		v=v+[init+i+1]
-	return v
+    """
+    Creats an ordered sequency
+    """
+    v=[init]
+    n=fin-init
+    for i in range(n):
+        v=v+[init+i+1]
+    return v
 
 def summat(m1,m2):
-	dim=len(m1)
-	s=mat_zero(dim)
-	for i in range(dim):
-		for j in range (dim):
-			s[i][j]=m1[i][j]+m2[i][j]
-	return s
+    dim=len(m1)
+    s=zeros(dim)
+    for i in range(dim):
+        for j in range (dim):
+            s[i][j]=m1[i][j]+m2[i][j]
+    return s
 
 def ang(vec):
     """
@@ -220,7 +220,7 @@ def txun(M,b,x0,t,k):
     circ=circ.compose(circ1,range(n+anc+1))
     return alep,circ
 
-def txm(M,mats,coefs,b,x_0,t,k):
+def txp(M,mats,coefs,b,x_0,t,k):
     """
     Tao Xin algorithm to solve LDEs system.
     (Includes particular solutions)
@@ -260,14 +260,14 @@ def txm(M,mats,coefs,b,x_0,t,k):
     for i in range(k):
         init=n+i*qdits
         fin=init+qdits-1
-        circ.append(gate,ord_seq(init,fin))
+        circ.append(gate,oseq(init,fin))
     
     conUx=prep(x_0).to_gate().control(1)
     conb=prep(b).to_gate().control(1)
     circ.x(reg-1)
-    circ.append(conUx,[reg-1]+ord_seq(0,n-1))
+    circ.append(conUx,[reg-1]+oseq(0,n-1))
     circ.x(reg-1)
-    circ.append(conb,[reg-1]+ord_seq(0,n-1))
+    circ.append(conb,[reg-1]+oseq(0,n-1))
     circ.barrier()
     
     vecs1=[0]*(2**k)
@@ -286,23 +286,23 @@ def txm(M,mats,coefs,b,x_0,t,k):
     convs1=prep(vecs1).to_gate().control(1)
     convs2=prep(vecs2).to_gate().control(1)
     circ.x(reg-1)
-    circ.append(convs1,[reg-1]+ord_seq(n+k*qdits,n+k*qdits+k-1))
+    circ.append(convs1,[reg-1]+oseq(n+k*qdits,n+k*qdits+k-1))
     circ.x(reg-1)
-    circ.append(convs2,[reg-1]+ord_seq(n+k*qdits,n+k*qdits+k-1))
+    circ.append(convs2,[reg-1]+oseq(n+k*qdits,n+k*qdits+k-1))
     circ.barrier()
     
     for i in range(k):
         for j in range(L):
-            vec=binr(qdits,j)
+            vec=brandr(qdits,j)
             auxc=QuantumCircuit(n)
-            auxc.unitary(mats[j],ord_seq(0,n-1))
+            auxc.unitary(mats[j],oseq(0,n-1))
             gate=auxc.to_gate().control(qdits+1)
             fin=reg-k-2-i*qdits
             init=fin-qdits+1
             for h in range(qdits):
                 if(vec[h]==0):
                     circ.x(init+h)
-            circ.append(gate,[reg-2-i]+ord_seq(fin-qdits+1,fin)+[0,n-1])
+            circ.append(gate,[reg-2-i]+oseq(fin-qdits+1,fin)+[0,n-1])
     for h in range(qdits):
         if(vec[h]==0):
             circ.x(init+h)
@@ -311,16 +311,16 @@ def txm(M,mats,coefs,b,x_0,t,k):
     convs1dag=prep(vecs1).to_gate().inverse().control(1)
     convs2dag=prep(vecs2).to_gate().inverse().control(1)
     circ.x(reg-1)
-    circ.append(convs1dag,[reg-1]+ord_seq(n+k*qdits,n+k*qdits+k-1))
+    circ.append(convs1dag,[reg-1]+oseq(n+k*qdits,n+k*qdits+k-1))
     circ.x(reg-1)
-    circ.append(convs2dag,[reg-1]+ord_seq(n+k*qdits,n+k*qdits+k-1))
+    circ.append(convs2dag,[reg-1]+oseq(n+k*qdits,n+k*qdits+k-1))
     circ.barrier()
     
     gatedag=prep(vecV).to_gate().inverse()
     for i in range(k):
         init=n+i*qdits
         fin=init+qdits-1
-        circ.append(gatedag,ord_seq(init,fin))
+        circ.append(gatedag,oseq(init,fin))
     
     circ.unitary(v,reg-1).inverse()
     return S,circ
@@ -334,10 +334,28 @@ def getsol(vec, anc, num):
     tam=len(vec)
     dig=math.ceil(np.log2(tam))
     for i in range(tam):
-        alg=binr(dig,i)
+        alg=brandr(dig,i)
         aux=0
-    for j in range(anc):
-        aux=aux+alg[j]
-    if (aux==0):
-        sol=sol+[vec[i]*num]
+        for j in range(anc):
+            aux=aux+alg[j]
+        if (aux==0):
+            sol=sol+[vec[i]*num]
     return sol
+
+def unitarygen(thet):
+    dim=len(thet)
+    prod=[1]
+    for i in range(dim):
+        t = thet[i]/2
+        fac = [[np.cos(t),-np.sin(t)],[np.sin(t),np.cos(t)]]
+        aux = prod
+        prod = np.kron(fac,aux)
+    return prod
+
+def divmat(M,e):
+    dim = len(M[0])
+    A = zeros(dim)
+    for i in range(dim):
+        for j in range(dim):
+            A[i][j] = M[i][j]/e
+    return A
