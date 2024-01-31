@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: "Pavoleti"
+    given-names: "Paulo César Souza"
+    orcid: "https://orcid.org/0000-0003-3034-3410"
+title: "Solução de Sistemas de Equações Diferenciais em Computadores Quântico"
+version: 1.0.2
+date-released: 2024-02-10
+url: "https://github.com/PPavoleti/IC-FAPESP-CQ-PAULO_PAVOLETI-2023-2024"
